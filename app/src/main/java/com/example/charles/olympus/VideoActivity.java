@@ -29,41 +29,6 @@ public class VideoActivity extends AppCompatActivity {
         }
         mediaPlayer.start();
 
-//        // Create a MediaSessionCompat
-//        mMediaSession = new MediaSessionCompat(this, "Video Player");
-//
-//        // Enable callbacks from MediaButtons and TransportControls
-//        mMediaSession.setFlags(
-//                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-//                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-//
-//        // Do not let MediaButtons restart the player when the app is not visible
-//        mMediaSession.setMediaButtonReceiver(null);
-//
-//        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
-//        mStateBuilder = new PlaybackStateCompat.Builder()
-//                .setActions(
-//                        PlaybackStateCompat.ACTION_PLAY |
-//                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
-//        mMediaSession.setPlaybackState(mStateBuilder.build());
-//
-//        // MySessionCallback has methods that handle callbacks from a media controller
-//        mMediaSession.setCallback(new MediaSessionCompat.Callback() {
-//            @Override
-//            public void onCommand(String command, Bundle extras, ResultReceiver cb) {
-//                super.onCommand(command, extras, cb);
-//                switch (command)
-//                {
-//
-//                }
-//            }
-//        });
-//
-//        // Create a MediaControllerCompat
-//        MediaControllerCompat mediaController =
-//                new MediaControllerCompat(this, mMediaSession);
-//
-//        MediaControllerCompat.setMediaController(this, mediaController);
     }
 }
 
