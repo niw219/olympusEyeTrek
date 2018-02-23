@@ -22,8 +22,8 @@ public class HttpSingleton extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] objects) {
         String response = request();
-        Log.d("okhttp", response);
-        Log.d("okhttp", response);
+        Log.d("http", response);
+        Log.d("http", response);
         return response;
     }
 
