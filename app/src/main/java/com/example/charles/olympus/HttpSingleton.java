@@ -4,12 +4,11 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
+
 
 /**
  * Created by Charles Inwald on 2/22/18.
@@ -24,19 +23,46 @@ public class HttpSingleton extends AsyncTask {
         String response = request();
         Log.d("http", response);
         Log.d("http", response);
+        uploadFile();
         return response;
     }
 
     @Nullable
     private String request() {
         String response = null;
+        String url = "http://olympus-cci219706483.codeanyapp.com:8000/test";
         try {
-            String url = "http://olympus-cci219706483.codeanyapp.com:8000/test";
             response = run(url);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return response;
+    }
+
+    public static void uploadFile() {
+        File image = new File("drawable/one.jpg");
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody formBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", "one.jpg",
+                        RequestBody.create(MediaType.parse("image/jpg"), image))
+                .build();
+        String url = "http://olympus-cci219706483.codeanyapp.com:8000/test";
+
+        Request request = new Request.Builder().url(url).post(formBody).build();
+
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!response.isSuccessful()) try {
+            throw new IOException("Unexpected code " + response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String run(String url) throws IOException {

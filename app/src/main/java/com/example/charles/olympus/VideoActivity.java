@@ -56,6 +56,7 @@ public class VideoActivity extends AppCompatActivity {
                 (VideoView)findViewById(R.id.videoView2).pause();
                 break;
 
+<<<<<<< HEAD
             default:
                 break;
         }
@@ -96,5 +97,8 @@ public class VideoActivity extends AppCompatActivity {
 //
 //        MediaControllerCompat.setMediaController(this, mediaController);
 
+=======
+    }
+>>>>>>> 6921deb92f5dee0f24a807d7c2334b02e7646411
 }
 
