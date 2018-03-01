@@ -1,34 +1,65 @@
 package com.example.charles.olympus;
 
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.ResultReceiver;
-import android.support.v4.media.session.MediaControllerCompat;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-import java.io.IOException;
+import android.view.View;
+import android.widget.Button;
+import android.widget.VideoView;
 
 public class VideoActivity extends AppCompatActivity {
     MediaSessionCompat mMediaSession;
     PlaybackStateCompat.Builder mStateBuilder;
+    public HttpSingleton http = new HttpSingleton();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        String url = "https://www.rmp-streaming.com/media/bbb-360p.mp4";
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(url);
-            mediaPlayer.prepare(); // might take long! (for buffering, etc)
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.start();
+        //String url = "https://www.rmp-streaming.com/media/bbb-360p.mp4";
+        final VideoView video = (VideoView)findViewById(R.id.videoView2);
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/"+R.raw.videoplayback);
+        //Uri uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName(), new File(R.raw.videoplayback));
 
+        video.setVideoURI(uri);
+        video.start();
+
+        Button playButton = findViewById(R.id.playButton);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                video.start();
+            }
+        });
+
+        Button pauseButton = findViewById(R.id.pauseButton);
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                video.pause();
+            }
+        });
+        //final MediaPlayer mediaPlayer;
+        /**try {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.videoplayback);
+            mediaPlayer.prepare();
+            mediaPlayer.start(); // might take long! (for buffering, etc)
+**/
+        }
+    /**@Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.playButton:
+                (VideoView)findViewById(R.id.videoView2).resume();
+                break;
+            case R.id.pauseButton:
+                (VideoView)findViewById(R.id.videoView2).pause();
+                break;
+
+            default:
+                break;
+        }
+    }**/
 //        // Create a MediaSessionCompat
 //        mMediaSession = new MediaSessionCompat(this, "Video Player");
 //
@@ -64,6 +95,6 @@ public class VideoActivity extends AppCompatActivity {
 //                new MediaControllerCompat(this, mMediaSession);
 //
 //        MediaControllerCompat.setMediaController(this, mediaController);
-    }
+
 }
 
