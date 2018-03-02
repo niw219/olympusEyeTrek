@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.VideoView;
@@ -21,6 +22,7 @@ public class VideoActivity extends AppCompatActivity {
         //String url = "https://www.rmp-streaming.com/media/bbb-360p.mp4";
         final VideoView video = (VideoView)findViewById(R.id.videoView2);
         Uri uri = Uri.parse("android.resource://" + getPackageName() + "/"+R.raw.videoplayback);
+        Log.d("URI", String.valueOf(uri));
         //Uri uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName(), new File(R.raw.videoplayback));
 
         video.setVideoURI(uri);
@@ -45,7 +47,7 @@ public class VideoActivity extends AppCompatActivity {
             mediaPlayer.prepare();
             mediaPlayer.start(); // might take long! (for buffering, etc)
 **/
-        }
+        }}
     /**@Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -97,8 +99,4 @@ public class VideoActivity extends AppCompatActivity {
 //
 //        MediaControllerCompat.setMediaController(this, mediaController);
 
-=======
-    }
->>>>>>> 6921deb92f5dee0f24a807d7c2334b02e7646411
-}
 
