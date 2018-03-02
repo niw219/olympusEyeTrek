@@ -28,7 +28,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public HttpSingleton http = new HttpSingleton();
-    public String url = "http://olympus-cci219706483.codeanyapp.com:8000/test";
+//    public String url = "http://olympus-cci219706483.codeanyapp.com:8000/test";
     private SurfaceView mPreview;
     private Camera mCamera;
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
                 fos.close();
+                Log.d("FILE","File successfully written");
+                postRequest(pictureFile);
+
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
             } catch (IOException e) {
@@ -70,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
-        getRequest();
+//        getRequest();
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -83,17 +86,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         );
     }
 
-    private void getRequest() {
+    private static void postRequest(File image) {
         String result = null;
         try {
-            result = new HttpSingleton().execute(url).get().toString();
+            result = new HttpSingleton().execute(image).get().toString();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        setText(result);
     }
+
+//    private void getRequest() {
+//        String result = null;
+//        try {
+//            result = new HttpSingleton().execute(url).get().toString();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//        setText(result);
+//    }
+
 
     public void setText(String text) {
 //        TextView textView = findViewById(R.id.maintext);
@@ -104,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.one:
+                releaseCamera();
                 Intent i = new Intent(this, VideoActivity.class);
                 i.putExtra("Video","1");
                 startActivity(i);
@@ -144,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             return null;
         }
-        
 
         return mediaFile;
     }
