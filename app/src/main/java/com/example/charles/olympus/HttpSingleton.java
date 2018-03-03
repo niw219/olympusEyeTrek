@@ -39,8 +39,8 @@ public class HttpSingleton extends AsyncTask {
 //        Log.d("http", response);
 //        Log.d("http", response);
 //        uploadFile();
-        uploadFile((File) objects[0]);
-        return "upload finished?";
+        String result = uploadFile((File) objects[0]);
+        return result;
     }
 
     @Nullable
@@ -58,7 +58,7 @@ public class HttpSingleton extends AsyncTask {
     }
 
 
-    public static void uploadFile(File image) {
+    public static String uploadFile(File image) {
 //        Uri uri = Uri.parse("android.resource://"  + +  "/"+R.raw.videoplayback);
 //        File image = new File("fileres/drawable/one.jpg");
 //        File image = new File();
@@ -97,12 +97,14 @@ public class HttpSingleton extends AsyncTask {
 
         try {
             Response response = client.newCall(request).execute();
+            return response.body().string();
         } catch (IOException e) {
             e.printStackTrace();
         }
         Response response = null;
         try {
             response = client.newCall(request).execute();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -112,6 +114,12 @@ public class HttpSingleton extends AsyncTask {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            return response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Unreadable";
     }
 
 

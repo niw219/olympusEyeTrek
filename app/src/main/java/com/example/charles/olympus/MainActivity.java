@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -86,10 +87,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         );
     }
 
-    private static void postRequest(File image) {
+    private void postRequest(File image) {
         String result = null;
         try {
             result = new HttpSingleton().execute(image).get().toString();
+            Toast toast = Toast.makeText(this, result,Toast.LENGTH_LONG);
+            toast.show();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
