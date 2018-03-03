@@ -14,13 +14,20 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.gotev.speech.Speech;
+import net.gotev.speech.SpeechDelegate;
+import net.gotev.speech.SpeechRecognitionNotAvailable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -85,6 +92,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
+        try {
+            Speech.init(this, getPackageName());
+
+            // you must have android.permission.RECORD_AUDIO granted at this point
+            Speech.getInstance().startListening(new SpeechDelegate() {
+                @Override
+                public void onStartOfSpeech() {
+                    Log.i("speech", "speech recognition is now active");
+                }
+
+                @Override
+                public void onSpeechRmsChanged(float value) {
+                    Log.d("speech", "rms is now: " + value);
+                }
+
+                @Override
+                public void onSpeechPartialResults(List<String> results) {
+                    StringBuilder str = new StringBuilder();
+                    for (String res : results) {
+                        str.append(res).append(" ");
+                    }
+
+                    Log.i("speech", "partial result: " + str.toString().trim());
+                    if ((str.toString().trim()).equals("capture"))
+                    {
+                        mCamera.takePicture(null, null, mPicture);
+                    }
+                }
+
+                @Override
+                public void onSpeechResult(String result) {
+                    Log.i("speech", "result: " + result);
+                }
+            });
+        } catch (SpeechRecognitionNotAvailable exc) {
+            Log.e("speech", "Speech recognition is not available on this device!");
+        }
     }
 
     private void postRequest(File image) {
@@ -99,18 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
     }
-
-//    private void getRequest() {
-//        String result = null;
-//        try {
-//            result = new HttpSingleton().execute(url).get().toString();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//        setText(result);
-//    }
 
 
     public void setText(String text) {
@@ -189,8 +221,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onPause();
         releaseCamera();              // release the camera immediately on pause event
     }
-
-
 
 
     private void releaseCamera(){

@@ -1,27 +1,12 @@
 package com.example.charles.olympus;
 
-import android.hardware.Camera;
-import android.net.Uri;
+
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import okhttp3.*;
-
-import static android.content.ContentValues.TAG;
-import static android.media.MediaCodec.MetricsConstants.MIME_TYPE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 
 /**

@@ -20,6 +20,7 @@ android {
 
 dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile 'net.gotev:speech:1.1.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
