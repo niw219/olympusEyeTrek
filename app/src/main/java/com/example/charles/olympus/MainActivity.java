@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             result = new HttpSingleton().execute(image).get().toString();
             Toast toast = Toast.makeText(this, result,Toast.LENGTH_LONG);
             toast.show();
+            //Trigger Video Activity
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
