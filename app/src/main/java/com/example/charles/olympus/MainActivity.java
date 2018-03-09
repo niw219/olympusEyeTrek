@@ -3,15 +3,14 @@ package com.example.charles.olympus;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import net.gotev.speech.Speech;
@@ -26,8 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -138,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast toast = Toast.makeText(this, result,Toast.LENGTH_LONG);
             toast.show();
             //Trigger Video Activity
+            Intent i = new Intent(this, VideoActivity.class);
+            startActivity(i);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
