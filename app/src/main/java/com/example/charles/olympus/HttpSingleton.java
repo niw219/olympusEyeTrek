@@ -33,7 +33,7 @@ public class HttpSingleton extends AsyncTask {
         Log.d("RUN","Request method");
 
         String response = null;
-        String url = "http://olympus-cci219706483.codeanyapp.com:1337/admin";
+        String url = "http://olympusbackend-cci219706483.codeanyapp.com:1337/admin";
         try {
             response = run(url);
         } catch (IOException e) {
@@ -64,7 +64,7 @@ public class HttpSingleton extends AsyncTask {
                 .addFormDataPart("file", "sampleFile", RequestBody.create(mediaType, image));
         RequestBody formBody = builder.build();
 
-        String url = "http://olympus-cci219706483.codeanyapp.com:1337/upload";
+        String url = "http://olympusbackend-cci219706483.codeanyapp.com:1337/upload";
 
 //        Request request = new Request.Builder().url(url).post(formBody).build();
 //        Log.d("IMAGE",image.toString());
@@ -73,7 +73,7 @@ public class HttpSingleton extends AsyncTask {
 //        MediaType mediaType = MediaType.parse("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
 //        RequestBody body = RequestBody.create(mediaType, "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"sampleFile\"; filename=\"IMG_0178.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--");
         Request request = new Request.Builder()
-                .url("http://olympus-cci219706483.codeanyapp.com:1337/upload")
+                .url("http://olympusbackend-cci219706483.codeanyapp.com:1337/upload")
                 .post(formBody)
                 .addHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")
                 .addHeader("cache-control", "no-cache")

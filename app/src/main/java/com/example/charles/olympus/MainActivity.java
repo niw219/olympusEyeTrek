@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Camera mCamera;
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         public static final int MEDIA_TYPE_IMAGE = 1;
-        public static final int MEDIA_TYPE_VIDEO = 2;
+        public static final int  MEDIA_TYPE_VIDEO = 2;
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 
