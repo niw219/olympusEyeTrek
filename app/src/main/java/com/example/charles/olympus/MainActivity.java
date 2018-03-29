@@ -33,12 +33,10 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public HttpSingleton http = new HttpSingleton();
-//    public String url = "http://olympus-cci219706483.codeanyapp.com:8000/test";
     private SurfaceView mPreview;
     private Camera mCamera;
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         public static final int MEDIA_TYPE_IMAGE = 1;
-        public static final int MEDIA_TYPE_VIDEO = 2;
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 
@@ -134,6 +132,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             result = new HttpSingleton().execute(image).get().toString();
             Toast toast = Toast.makeText(this, result,Toast.LENGTH_LONG);
             toast.show();
+            String [] sep = result.split("\n");
+            String modelNo = sep[0];
+            Log.d("model num", modelNo);
             //Trigger Video Activity
             Intent i = new Intent(this, VideoActivity.class);
             startActivity(i);
