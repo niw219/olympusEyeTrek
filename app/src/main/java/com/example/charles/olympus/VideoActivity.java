@@ -6,14 +6,16 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 public class VideoActivity extends AppCompatActivity {
     MediaSessionCompat mMediaSession;
     PlaybackStateCompat.Builder mStateBuilder;
     public HttpSingleton http = new HttpSingleton();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +28,27 @@ public class VideoActivity extends AppCompatActivity {
         //Uri uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName(), new File(R.raw.videoplayback));
 
         video.setVideoURI(uri);
+        MediaController mediaController = new MediaController(this);
+        mediaController.setAnchorView(video);
+
+        video.setMediaController(mediaController);
         video.start();
+
+        video.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(video.isPlaying()) {
+
+                    video.pause();
+                } else  {
+                    video.start();
+                }
+                return true;
+            }
+        });
+        /**video.start();
 
         Button playButton = findViewById(R.id.playButton);
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +63,7 @@ public class VideoActivity extends AppCompatActivity {
                 video.pause();
             }
         });
+         **/
         //final MediaPlayer mediaPlayer;
         /**try {
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.videoplayback);

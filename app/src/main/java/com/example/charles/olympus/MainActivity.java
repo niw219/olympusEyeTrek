@@ -77,6 +77,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 //        getRequest();
+       /** preview.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent m) {
+                    // get an image from the camera
+                    mCamera.takePicture(null, null, mPicture);
+                    return true;
+                }
+
+        });**/
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -87,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
+
         try {
             Speech.init(this, getPackageName());
 
@@ -124,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (SpeechRecognitionNotAvailable exc) {
             Log.e("speech", "Speech recognition is not available on this device!");
         }
+
     }
 
     private void postRequest(File image) {
