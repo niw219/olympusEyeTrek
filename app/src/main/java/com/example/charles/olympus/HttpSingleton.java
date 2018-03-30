@@ -33,7 +33,6 @@ public class HttpSingleton extends AsyncTask {
         Log.d("RUN","Request method");
 
         String response = null;
-
         String url = "http://olympusbackend-cci219706483.codeanyapp.com:1337/admin";
         try {
             response = run(url);
