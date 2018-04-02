@@ -19,14 +19,23 @@ android {
 }
 
 dependencies {
+    fileTree(dir: 'libs', include: '**/*.aar')
+            .each { File file ->
+        dependencies.add("compile", [name: file.name.lastIndexOf('.').with { it != -1 ? file.name[0..<it] : file.name }, ext: 'aar'])
+    }
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'net.gotev:speech:1.1.2'
     compile 'ai.api:sdk:2.0.7@aar'
     compile 'ai.api:libai:1.6.12'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
 }

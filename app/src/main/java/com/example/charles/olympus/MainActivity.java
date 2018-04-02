@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 //import android.speech.SpeechRecognizer;
-import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -54,7 +53,6 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 import static android.widget.Toast.makeText;
 import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
-
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecognitionListener {
     public HttpSingleton http = new HttpSingleton();
@@ -142,27 +140,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
-<<<<<<< HEAD
 
-        try {
-            Speech.init(this, getPackageName());
-
-            // you must have android.permission.RECORD_AUDIO granted at this point
-            Speech.getInstance().startListening(new SpeechDelegate() {
-                @Override
-                public void onStartOfSpeech() {
-                    Log.i("speech", "speech recognition is now active");
-=======
-        Button voiceButton = (Button) findViewById(R.id.voice);
-        voiceButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        listenButtonOnClick();
-                    }
->>>>>>> 1d4fb652f2a271faa732c69ce445d5c50f60bc13
-                }
-        );
+//        try {
+//            Speech.init(this, getPackageName());
+//
+//            // you must have android.permission.RECORD_AUDIO granted at this point
+//            Speech.getInstance().startListening(new SpeechDelegate() {
+//                @Override
+//                public void onStartOfSpeech() {
+//                    Log.i("speech", "speech recognition is now active");
+//                    Button voiceButton = (Button) findViewById(R.id.voice);
+//                    voiceButton.setOnClickListener(
+//                            new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    listenButtonOnClick();
+//                                }
+//                            }
+//                    );
 
 
 //        try {
@@ -285,10 +280,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e("MIC", "prepare() failed");
         }
 
-<<<<<<< HEAD
-=======
         mRecorder.start();
->>>>>>> 1d4fb652f2a271faa732c69ce445d5c50f60bc13
     }
 
 //    private void stopRecording() {
@@ -566,4 +558,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 }
+
+
 
