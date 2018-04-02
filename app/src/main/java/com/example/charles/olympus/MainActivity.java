@@ -101,6 +101,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 //        getRequest();
+       /** preview.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent m) {
+                    // get an image from the camera
+                    mCamera.takePicture(null, null, mPicture);
+                    return true;
+                }
+
+        });**/
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -111,6 +121,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
+<<<<<<< HEAD
+
+        try {
+            Speech.init(this, getPackageName());
+
+            // you must have android.permission.RECORD_AUDIO granted at this point
+            Speech.getInstance().startListening(new SpeechDelegate() {
+                @Override
+                public void onStartOfSpeech() {
+                    Log.i("speech", "speech recognition is now active");
+=======
         Button voiceButton = (Button) findViewById(R.id.voice);
         voiceButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -118,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onClick(View v) {
                         listenButtonOnClick();
                     }
+>>>>>>> 1d4fb652f2a271faa732c69ce445d5c50f60bc13
                 }
         );
 //        try {
@@ -202,7 +224,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e("MIC", "prepare() failed");
         }
 
+<<<<<<< HEAD
+=======
         mRecorder.start();
+>>>>>>> 1d4fb652f2a271faa732c69ce445d5c50f60bc13
     }
 
 //    private void stopRecording() {
