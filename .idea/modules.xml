@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/olympus.iml" filepath="$PROJECT_DIR$/olympus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pocketsphinx-android-5prealpha-release/pocketsphinx-android-5prealpha-release.iml" filepath="$PROJECT_DIR$/pocketsphinx-android-5prealpha-release/pocketsphinx-android-5prealpha-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pocketsphinx-android-5prealpha-release2/pocketsphinx-android-5prealpha-release2.iml" filepath="$PROJECT_DIR$/pocketsphinx-android-5prealpha-release2/pocketsphinx-android-5prealpha-release2.iml" />
     </modules>
   </component>
 </project>
