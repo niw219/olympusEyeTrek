@@ -8,15 +8,19 @@ import android.media.MediaRecorder;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+//import android.speech.SpeechRecognizer;
+import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonElement;
@@ -29,6 +33,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,13 +46,17 @@ import ai.api.android.AIService;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
+import edu.cmu.pocketsphinx.*;
+import edu.cmu.pocketsphinx.SpeechRecognizer;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+import static android.widget.Toast.makeText;
+import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, AIListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecognitionListener {
     public HttpSingleton http = new HttpSingleton();
     private SurfaceView mPreview;
     private Camera mCamera;
@@ -55,7 +64,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String mFileName = null;
     private MediaPlayer mPlayer = null;
     private AIService aiService;
+    private SpeechRecognizer recognizer;
 
+    /* Named searches allow to quickly reconfigure the decoder */
+    private static final String KWS_SEARCH = "wakeup";
+    private static final String FORECAST_SEARCH = "forecast";
+    private static final String DIGITS_SEARCH = "digits";
+    private static final String CAPTURE = "capture";
+
+    private static final String PHONE_SEARCH = "phones";
+    private static final String MENU_SEARCH = "menu";
+
+    /* Keyword we are looking for to activate menu */
+    private static final String KEYPHRASE = "voice";
     private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         public static final int MEDIA_TYPE_IMAGE = 1;
 
@@ -142,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 >>>>>>> 1d4fb652f2a271faa732c69ce445d5c50f60bc13
                 }
         );
+
+
 //        try {
 //            Speech.init(this, getPackageName());
 //
@@ -181,16 +204,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        // Record to the external cache directory for visibility
 //        mFileName = getExternalCacheDir().getAbsolutePath();
 //        mFileName += "/audiorecordtest.3gp";
-        //Creates a listener for voice commands
-        final AIConfiguration config = new AIConfiguration("d3277182e8c44eacb0e71b2e82c67d2f",
-                AIConfiguration.SupportedLanguages.English,
-                AIConfiguration.RecognitionEngine.System);
-        aiService = AIService.getService(this, config);
-        aiService.setListener(this);
-//        aiService.startListening();
+
+//        Creates a listener for voice commands
+
+//        recognizer.addListener(new PocketSphinxRecognitionListener());
+//        if(!VoiceForegroundService.isStarted){
+//            Intent voiceForegroundService = new Intent(getApplicationContext(), VoiceForegroundService.class);
+//            voiceForegroundService.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+//            getApplicationContext().startService(voiceForegroundService);
+//            VoiceForegroundService.isStarted = true;
+        new SetupTask(this).execute();
 
     }
+//
+//        final AIConfiguration config = new AIConfiguration("d3277182e8c44eacb0e71b2e82c67d2f",
+//                AIConfiguration.SupportedLanguages.English,
+//                AIConfiguration.RecognitionEngine.System);
+//        aiService = AIService.getService(this, config);
+//        aiService.setListener(new DialogflowListener());
+//        listenButtonOnClick();
+//        Log.d("TEST VOICE: ", String.valueOf(SpeechRecognizer.isRecognitionAvailable(this)));
+//        aiService.startListening();
 
+
+    private static class SetupTask extends AsyncTask<Void, Void, Exception> {
+        WeakReference<MainActivity> activityReference;
+        SetupTask(MainActivity activity) {
+            this.activityReference = new WeakReference<>(activity);
+        }
+        @Override
+        protected Exception doInBackground(Void... params) {
+            try {
+                Assets assets = new Assets(activityReference.get());
+                File assetDir = assets.syncAssets();
+                activityReference.get().setupRecognizer(assetDir);
+            } catch (IOException e) {
+                return e;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Exception result) {
+            if (result != null) {
+                Log.d("VOICE","Failed to init recognizer " + result);
+            } else {
+                activityReference.get().switchSearch(KWS_SEARCH);
+            }
+        }
+    }
     public void onResult(final AIResponse response) {
         Result result = response.getResult();
 
@@ -206,10 +267,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 "\nAction: " + result.getAction() +
                 "\nParameters: " + parameterString);
     }
-    @Override
-    public void onError(final AIError error) {
-        Log.d("DialogFlow",error.toString());
-    }
+//    @Override
+//    public void onError(final AIError error) {
+//        Log.d("DialogFlow",error.toString());
+//    }
 
     private void startRecording() {
         mRecorder = new MediaRecorder();
@@ -368,25 +429,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onAudioLevel(float level) {
-
-    }
-
-    @Override
-    public void onListeningStarted() {
-
-    }
-
-    @Override
-    public void onListeningCanceled() {
-
-    }
-
-    @Override
-    public void onListeningFinished() {
-
-    }
+//    @Override
+//    public void onAudioLevel(float level) {
+//
+//    }
+//
+//    @Override
+//    public void onListeningStarted() {
+//
+//    }
+//
+//    @Override
+//    public void onListeningCanceled() {
+//
+//    }
+//
+//    @Override
+//    public void onListeningFinished() {
+//
+//    }
 
     /** Tests for internet connectivity, prompts wifi if no connectivity */
     public void wifiPrompt(){
@@ -397,5 +458,112 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
         }
     }
+    /**
+     * In partial result we get quick updates about current hypothesis. In
+     * keyword spotting mode we can react here, in other modes we need to wait
+     * for final result in onResult.
+     */
+    @Override
+    public void onPartialResult(Hypothesis hypothesis) {
+        if (hypothesis == null)
+            return;
+
+        String text = hypothesis.getHypstr();
+        if (text.equals(KEYPHRASE))
+            switchSearch(MENU_SEARCH);
+        else if (text.equals(DIGITS_SEARCH))
+            switchSearch(DIGITS_SEARCH);
+        else if (text.equals(CAPTURE)) {
+            Log.d("VOICE", "CAPTURE REACHED YEAH BOIII");
+            mCamera.takePicture(null, null, mPicture);
+
+//            switchSearch(CAPTURE);
+        }
+        else if (text.equals(PHONE_SEARCH))
+            switchSearch(PHONE_SEARCH);
+        else if (text.equals(FORECAST_SEARCH))
+            switchSearch(FORECAST_SEARCH);
+        }
+
+    /**
+     * This callback is called when we stop the recognizer.
+     */
+    @Override
+    public void onResult(Hypothesis hypothesis) {
+        Log.d("Voice", String.valueOf(hypothesis));
+    }
+
+    @Override
+    public void onBeginningOfSpeech() {
+    }
+
+    /**
+     * We stop recognizer here to get a final result
+     */
+    @Override
+    public void onEndOfSpeech() {
+        if (!recognizer.getSearchName().equals(KWS_SEARCH))
+            switchSearch(KWS_SEARCH);
+    }
+
+    private void switchSearch(String searchName) {
+        recognizer.stop();
+
+        // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
+        if (searchName.equals(KWS_SEARCH))
+            recognizer.startListening(searchName);
+        else
+            recognizer.startListening(searchName, 10000);
+
+    }
+
+    private void setupRecognizer(File assetsDir) throws IOException {
+        // The recognizer can be configured to perform multiple searches
+        // of different kind and switch between them
+
+        recognizer = SpeechRecognizerSetup.defaultSetup()
+                .setAcousticModel(new File(assetsDir, "en-us-ptm"))
+                .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
+
+                .setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
+
+                .getRecognizer();
+        recognizer.addListener(this);
+
+        /* In your application you might not need to add all those searches.
+          They are added here for demonstration. You can leave just one.
+         */
+
+        // Create keyword-activation search.
+        recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
+
+        // Create grammar-based search for selection between demos
+        File menuGrammar = new File(assetsDir, "menu.gram");
+        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+
+        // Create grammar-based search for digit recognition
+        File digitsGrammar = new File(assetsDir, "digits.gram");
+        recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
+
+
+//
+//        // Create language model search
+//        File languageModel = new File(assetsDir, "weather.dmp");
+//        recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
+//
+//        // Phonetic search
+//        File phoneticModel = new File(assetsDir, "en-phone.dmp");
+//        recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);
+    }
+
+    @Override
+    public void onError(Exception error) {
+    }
+
+    @Override
+    public void onTimeout() {
+        switchSearch(KWS_SEARCH);
+    }
+
 }
 
