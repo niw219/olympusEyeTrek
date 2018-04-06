@@ -140,86 +140,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
-
-//        try {
-//            Speech.init(this, getPackageName());
-//
-//            // you must have android.permission.RECORD_AUDIO granted at this point
-//            Speech.getInstance().startListening(new SpeechDelegate() {
-//                @Override
-//                public void onStartOfSpeech() {
-//                    Log.i("speech", "speech recognition is now active");
-//                    Button voiceButton = (Button) findViewById(R.id.voice);
-//                    voiceButton.setOnClickListener(
-//                            new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    listenButtonOnClick();
-//                                }
-//                            }
-//                    );
-
-
-//        try {
-//            Speech.init(this, getPackageName());
-//
-//            // you must have android.permission.RECORD_AUDIO granted at this point
-//            Speech.getInstance().startListening(new SpeechDelegate() {
-//                @Override
-//                public void onStartOfSpeech() {
-//                    Log.i("speech", "speech recognition is now active");
-//                }
-//
-//                @Override
-//                public void onSpeechRmsChanged(float value) {
-//                    Log.d("speech", "rms is now: " + value);
-//                }
-//
-//                @Override
-//                public void onSpeechPartialResults(List<String> results) {
-//                    StringBuilder str = new StringBuilder();
-//                    for (String res : results) {
-//                        str.append(res).append(" ");
-//                    }
-//
-//                    Log.i("speech", "partial result: " + str.toString().trim());
-//                    if ((str.toString().trim()).equals("capture")) {
-//                        mCamera.takePicture(null, null, mPicture);
-//                    }
-//                }
-//
-//                @Override
-//                public void onSpeechResult(String result) {
-//                    Log.i("speech", "result: " + result);
-//                }
-//            });
-//        } catch (SpeechRecognitionNotAvailable exc) {
-//            Log.e("speech", "Speech recognition is not available on this device!");
-//        }
-//        // Record to the external cache directory for visibility
-//        mFileName = getExternalCacheDir().getAbsolutePath();
-//        mFileName += "/audiorecordtest.3gp";
-
-//        Creates a listener for voice commands
-
-//        recognizer.addListener(new PocketSphinxRecognitionListener());
-//        if(!VoiceForegroundService.isStarted){
-//            Intent voiceForegroundService = new Intent(getApplicationContext(), VoiceForegroundService.class);
-//            voiceForegroundService.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-//            getApplicationContext().startService(voiceForegroundService);
-//            VoiceForegroundService.isStarted = true;
         new SetupTask(this).execute();
-
     }
-//
-//        final AIConfiguration config = new AIConfiguration("d3277182e8c44eacb0e71b2e82c67d2f",
-//                AIConfiguration.SupportedLanguages.English,
-//                AIConfiguration.RecognitionEngine.System);
-//        aiService = AIService.getService(this, config);
-//        aiService.setListener(new DialogflowListener());
-//        listenButtonOnClick();
-//        Log.d("TEST VOICE: ", String.valueOf(SpeechRecognizer.isRecognitionAvailable(this)));
-//        aiService.startListening();
+
 
 
     private static class SetupTask extends AsyncTask<Void, Void, Exception> {
@@ -262,10 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 "\nAction: " + result.getAction() +
                 "\nParameters: " + parameterString);
     }
-//    @Override
-//    public void onError(final AIError error) {
-//        Log.d("DialogFlow",error.toString());
-//    }
+
 
     private void startRecording() {
         mRecorder = new MediaRecorder();
@@ -283,23 +203,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecorder.start();
     }
 
-//    private void stopRecording() {
-//        mRecorder.stop();
-//        mRecorder.release();
-//        mRecorder = null;
-//    }
-//
-//
-//    private void startPlaying() {
-//        mPlayer = new MediaPlayer();
-//        try {
-//            mPlayer.setDataSource(mFileName);
-//            mPlayer.prepare();
-//            mPlayer.start();
-//        } catch (IOException e) {
-//            Log.e("PLAY AUDIO", "prepare() failed");
-//        }
-//    }
 
     private void postRequest(File image) {
         String result = null;
@@ -421,26 +324,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    @Override
-//    public void onAudioLevel(float level) {
-//
-//    }
-//
-//    @Override
-//    public void onListeningStarted() {
-//
-//    }
-//
-//    @Override
-//    public void onListeningCanceled() {
-//
-//    }
-//
-//    @Override
-//    public void onListeningFinished() {
-//
-//    }
-
     /** Tests for internet connectivity, prompts wifi if no connectivity */
     public void wifiPrompt(){
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -471,10 +354,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //            switchSearch(CAPTURE);
         }
-        else if (text.equals(PHONE_SEARCH))
-            switchSearch(PHONE_SEARCH);
-        else if (text.equals(FORECAST_SEARCH))
-            switchSearch(FORECAST_SEARCH);
+//        else if (text.equals(PHONE_SEARCH))
+//            switchSearch(PHONE_SEARCH);
+//        else if (text.equals(FORECAST_SEARCH))
+//            switchSearch(FORECAST_SEARCH);
         }
 
     /**
@@ -505,8 +388,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (searchName.equals(KWS_SEARCH))
             recognizer.startListening(searchName);
         else
-            recognizer.startListening(searchName, 10000);
-
+            recognizer.startListening(searchName, 1000000);
     }
 
     private void setupRecognizer(File assetsDir) throws IOException {
@@ -516,9 +398,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recognizer = SpeechRecognizerSetup.defaultSetup()
                 .setAcousticModel(new File(assetsDir, "en-us-ptm"))
                 .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
-
                 .setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
-
                 .getRecognizer();
         recognizer.addListener(this);
 
@@ -537,15 +417,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         File digitsGrammar = new File(assetsDir, "digits.gram");
         recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
 
-
-//
-//        // Create language model search
-//        File languageModel = new File(assetsDir, "weather.dmp");
-//        recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
-//
-//        // Phonetic search
-//        File phoneticModel = new File(assetsDir, "en-phone.dmp");
-//        recognizer.addAllphoneSearch(PHONE_SEARCH, phoneticModel);
     }
 
     @Override
