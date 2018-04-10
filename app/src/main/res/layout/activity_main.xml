@@ -38,7 +38,9 @@
             android:id="@+id/camera_preview"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1" >
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,14 +58,6 @@
                 android:background="@drawable/bg_button"
                 android:text="Capture" />
 
-            <Button
-                android:id="@+id/voice"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@drawable/bg_button"
-                android:text="Voice" />
 
         </LinearLayout>
 

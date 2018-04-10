@@ -47,6 +47,7 @@ import ai.api.model.AIResponse;
 import ai.api.model.Result;
 import edu.cmu.pocketsphinx.*;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
+import jaygoo.widget.wlv.WaveLineView;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
+    private WaveLineView waveLineView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,16 +122,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 //        getRequest();
-       /** preview.setOnTouchListener(new View.OnTouchListener() {
+        /** preview.setOnTouchListener(new View.OnTouchListener() {
 
-                @Override
-                public boolean onTouch(View v, MotionEvent m) {
-                    // get an image from the camera
-                    mCamera.takePicture(null, null, mPicture);
-                    return true;
-                }
+        @Override public boolean onTouch(View v, MotionEvent m) {
+        // get an image from the camera
+        mCamera.takePicture(null, null, mPicture);
+        return true;
+        }
 
         });**/
+//        waveLineView = findViewById(R.id.waveLineView);
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -144,12 +146,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     private static class SetupTask extends AsyncTask<Void, Void, Exception> {
         WeakReference<MainActivity> activityReference;
+
         SetupTask(MainActivity activity) {
             this.activityReference = new WeakReference<>(activity);
         }
+
         @Override
         protected Exception doInBackground(Void... params) {
             try {
@@ -161,15 +164,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(Exception result) {
             if (result != null) {
-                Log.d("VOICE","Failed to init recognizer " + result);
+                Log.d("VOICE", "Failed to init recognizer " + result);
             } else {
                 activityReference.get().switchSearch(KWS_SEARCH);
             }
         }
     }
+
     public void onResult(final AIResponse response) {
         Result result = response.getResult();
 
@@ -239,16 +244,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 i.putExtra("Video", "1");
                 startActivity(i);
                 break;
-            case R.id.voice:
-                listenButtonOnClick();
-                break;
+//            case R.id.voice:
+//                listenButtonOnClick();
+//                break;
             default:
                 break;
         }
     }
 
     public void listenButtonOnClick() {
-        Log.d("Voice","Starting voice recognition");
+        Log.d("Voice", "Starting voice recognition");
         aiService.startListening();
     }
 
@@ -311,14 +316,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
         }
+//        waveLineView.onPause();
+
     }
 
 
@@ -329,15 +335,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /** Tests for internet connectivity, prompts wifi if no connectivity */
-    public void wifiPrompt(){
+    /**
+     * Tests for internet connectivity, prompts wifi if no connectivity
+     */
+    public void wifiPrompt() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if(!isConnected){
+        if (!isConnected) {
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
         }
     }
+
     /**
      * In partial result we get quick updates about current hypothesis. In
      * keyword spotting mode we can react here, in other modes we need to wait
@@ -363,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            switchSearch(PHONE_SEARCH);
 //        else if (text.equals(FORECAST_SEARCH))
 //            switchSearch(FORECAST_SEARCH);
-        }
+    }
 
     /**
      * This callback is called when we stop the recognizer.
@@ -375,6 +384,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBeginningOfSpeech() {
+//        waveLineView.startAnim();
+        Button one = findViewById(R.id.one);
+        one.setBackgroundColor(getResources().getColor(R.color.mic_colors));
+        Log.d("WTF","onBeginningOfSpeech");
+
     }
 
     /**
@@ -384,6 +398,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onEndOfSpeech() {
         if (!recognizer.getSearchName().equals(KWS_SEARCH))
             switchSearch(KWS_SEARCH);
+        Button one = findViewById(R.id.one);
+        one.setBackgroundColor(getResources().getColor(R.color.aidialog_background));
+        Log.d("WTF","onEndOfSpeech");
+//        waveLineView.stopAnim();
+
     }
 
     private void switchSearch(String searchName) {
@@ -410,7 +429,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /* In your application you might not need to add all those searches.
           They are added here for demonstration. You can leave just one.
          */
-
         // Create keyword-activation search.
         recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
 
@@ -433,6 +451,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switchSearch(KWS_SEARCH);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        waveLineView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        waveLineView.release();
+    }
 }
 
 
