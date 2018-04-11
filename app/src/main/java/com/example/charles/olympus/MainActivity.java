@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
     private boolean capturing = false;
     private String SNAP = "snap";
+    private boolean CLEAN = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String modelNo = sep[0];
             Log.d("model num", modelNo);
             //Trigger Video Activity
+            CLEAN = true;
             Intent i = new Intent(this, VideoActivity.class);
             startActivity(i);
         } catch (InterruptedException e) {
@@ -364,8 +366,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         else if (text.equals(CAPTURE) || text.equals(SNAP)) {
             Log.d("VOICE", "CAPTURE REACHED YEAH BOIII");
             safeCapture();
+        }
         else if (text.equals(STATUS)) {
-
+            status();
             }
 //            switchSearch(CAPTURE);
         }
@@ -373,6 +376,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            switchSearch(PHONE_SEARCH);
 //        else if (text.equals(FORECAST_SEARCH))
 //            switchSearch(FORECAST_SEARCH);
+
+
+    private void status() {
+        Log.d("STATUS:", String.valueOf(CLEAN));
     }
 
     public void safeCapture() {
