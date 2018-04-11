@@ -25,6 +25,7 @@ dependencies {
     }
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
     compile 'net.gotev:speech:1.1.2'
+    compile 'com.github.Jay-Goo:WaveLineView:v1.0.3'
     compile 'ai.api:sdk:2.0.7@aar'
     compile 'ai.api:libai:1.6.12'
     implementation fileTree(include: ['*.jar'], dir: 'libs')

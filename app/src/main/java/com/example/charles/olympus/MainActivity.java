@@ -47,7 +47,6 @@ import ai.api.model.AIResponse;
 import ai.api.model.Result;
 import edu.cmu.pocketsphinx.*;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
-import jaygoo.widget.wlv.WaveLineView;
 
 import static android.content.ContentValues.TAG;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
     private static final String CAPTURE = "capture";
+    private static final String STATUS = "status";
 
     private static final String PHONE_SEARCH = "phones";
     private static final String MENU_SEARCH = "menu";
@@ -102,7 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
-    private WaveLineView waveLineView;
+    private boolean capturing = false;
+    private String SNAP = "snap";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,14 +132,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         });**/
-//        waveLineView = findViewById(R.id.waveLineView);
         Button captureButton = (Button) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // get an image from the camera
-                        mCamera.takePicture(null, null, mPicture);
+                        safeCapture();
                     }
                 }
         );
@@ -323,7 +323,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mCamera.release();
             mCamera = null;
         }
-//        waveLineView.onPause();
 
     }
 
@@ -362,16 +361,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switchSearch(MENU_SEARCH);
         else if (text.equals(DIGITS_SEARCH))
             switchSearch(DIGITS_SEARCH);
-        else if (text.equals(CAPTURE)) {
+        else if (text.equals(CAPTURE) || text.equals(SNAP)) {
             Log.d("VOICE", "CAPTURE REACHED YEAH BOIII");
-            mCamera.takePicture(null, null, mPicture);
+            safeCapture();
+        else if (text.equals(STATUS)) {
 
+            }
 //            switchSearch(CAPTURE);
         }
 //        else if (text.equals(PHONE_SEARCH))
 //            switchSearch(PHONE_SEARCH);
 //        else if (text.equals(FORECAST_SEARCH))
 //            switchSearch(FORECAST_SEARCH);
+    }
+
+    public void safeCapture() {
+        if (!capturing) {
+            capturing = true;
+            mCamera.takePicture(null, null, mPicture);
+        }
     }
 
     /**
@@ -384,8 +392,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBeginningOfSpeech() {
-//        waveLineView.startAnim();
-        Button one = findViewById(R.id.one);
+        Button one = findViewById(R.id.button_capture);
         one.setBackgroundColor(getResources().getColor(R.color.mic_colors));
         Log.d("WTF","onBeginningOfSpeech");
 
@@ -398,10 +405,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onEndOfSpeech() {
         if (!recognizer.getSearchName().equals(KWS_SEARCH))
             switchSearch(KWS_SEARCH);
-        Button one = findViewById(R.id.one);
+        Button one = findViewById(R.id.button_capture);
         one.setBackgroundColor(getResources().getColor(R.color.aidialog_background));
         Log.d("WTF","onEndOfSpeech");
-//        waveLineView.stopAnim();
 
     }
 
@@ -431,6 +437,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          */
         // Create keyword-activation search.
         recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
+        recognizer.addKeyphraseSearch(KWS_SEARCH, CAPTURE);
+        recognizer.addKeyphraseSearch(KWS_SEARCH, SNAP);
+
 
         // Create grammar-based search for selection between demos
         File menuGrammar = new File(assetsDir, "menu.gram");
@@ -454,13 +463,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-//        waveLineView.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        waveLineView.release();
     }
 }
 
