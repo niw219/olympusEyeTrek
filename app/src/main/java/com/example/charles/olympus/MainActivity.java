@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-//import android.speech.SpeechRecognizer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -94,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 fos.close();
                 Log.d("FILE", "File successfully written");
                 postRequest(pictureFile);
-
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
             } catch (IOException e) {
@@ -221,14 +219,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String modelNo = sep[0];
             Log.d("model num", modelNo);
             //Trigger Video Activity
-            CLEAN = true;
-            Intent i = new Intent(this, VideoActivity.class);
-            startActivity(i);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    private void playVideo() {
+        CLEAN = true;
+        Intent i = new Intent(this, VideoActivity.class);
+        startActivity(i);
     }
 
 
@@ -358,6 +359,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (hypothesis == null)
             return;
 
+        //TODO: Delete these
         String text = hypothesis.getHypstr();
         if (text.equals(KEYPHRASE))
             switchSearch(MENU_SEARCH);
