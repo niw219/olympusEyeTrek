@@ -53,7 +53,7 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 import static android.widget.Toast.makeText;
 import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, RecognitionListener {
+public class MainActivity extends AppCompatActivity {
     public HttpSingleton http = new HttpSingleton();
     private SurfaceView mPreview;
     private Camera mCamera;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String mFileName = null;
     private MediaPlayer mPlayer = null;
     private AIService aiService;
-    private SpeechRecognizer recognizer;
+//    private SpeechRecognizer recognizer;
 
     /* Named searches allow to quickly reconfigure the decoder */
     private static final String KWS_SEARCH = "wakeup";
@@ -111,8 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RequestUserPermission requestUserPermission = new RequestUserPermission(this);
         requestUserPermission.verifyStoragePermissions();
         wifiPrompt();
-        Button one = findViewById(R.id.one);
-        one.setOnClickListener(this); // calling onClick() method
 
         // Create an instance of Camera
         mCamera = getCameraInstance();
@@ -141,38 +139,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
         );
-        new SetupTask(this).execute();
+//        new SetupTask(this).execute();
     }
 
 
-    private static class SetupTask extends AsyncTask<Void, Void, Exception> {
-        WeakReference<MainActivity> activityReference;
-
-        SetupTask(MainActivity activity) {
-            this.activityReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected Exception doInBackground(Void... params) {
-            try {
-                Assets assets = new Assets(activityReference.get());
-                File assetDir = assets.syncAssets();
-                activityReference.get().setupRecognizer(assetDir);
-            } catch (IOException e) {
-                return e;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Exception result) {
-            if (result != null) {
-                Log.d("VOICE", "Failed to init recognizer " + result);
-            } else {
-                activityReference.get().switchSearch(KWS_SEARCH);
-            }
-        }
-    }
+//    private static class SetupTask extends AsyncTask<Void, Void, Exception> {
+//        WeakReference<MainActivity> activityReference;
+//
+//        SetupTask(MainActivity activity) {
+//            this.activityReference = new WeakReference<>(activity);
+//        }
+//
+//        @Override
+//        protected Exception doInBackground(Void... params) {
+//            try {
+//                Assets assets = new Assets(activityReference.get());
+//                File assetDir = assets.syncAssets();
+//                activityReference.get().setupRecognizer(assetDir);
+//            } catch (IOException e) {
+//                return e;
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Exception result) {
+//            if (result != null) {
+//                Log.d("VOICE", "Failed to init recognizer " + result);
+//            } else {
+//                activityReference.get().switchSearch(KWS_SEARCH);
+//            }
+//        }
+//    }
 
     public void onResult(final AIResponse response) {
         Result result = response.getResult();
@@ -212,12 +210,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String result = null;
         try {
             result = new HttpSingleton().execute(image).get().toString();
-            Toast toast = Toast.makeText(this, result, Toast.LENGTH_LONG);
-            toast.show();
-            Log.d("Result", result);
+
             String[] sep = result.split("\n");
             String modelNo = sep[0];
-            Log.d("model num", modelNo);
+            if(modelNo.contains("GIF")){
+                Log.d("model num", modelNo);
+                Toast toast = Toast.makeText(this, modelNo, Toast.LENGTH_LONG);
+                toast.show();
+                Log.d("Result", result);
+                playVideo();
+            }
+            else {
+                Toast toast = Toast.makeText(this, "No Model Number found", Toast.LENGTH_LONG);
+                toast.show();
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
             //Trigger Video Activity
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -227,8 +236,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void playVideo() {
-        CLEAN = true;
+        releaseCamera();
         Intent i = new Intent(this, VideoActivity.class);
+        i.putExtra("Video", "1");
         startActivity(i);
     }
 
@@ -238,22 +248,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        textView.setText(text);
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.one:
-                releaseCamera();
-                Intent i = new Intent(this, VideoActivity.class);
-                i.putExtra("Video", "1");
-                startActivity(i);
-                break;
-//            case R.id.voice:
-//                listenButtonOnClick();
+//    @Override
+//    public void onClick(View view) {
+//        switch (view.getId()) {
+//            case R.id.one:
+//
 //                break;
-            default:
-                break;
-        }
-    }
+//
+//            default:
+//                break;
+//        }
+//    }
 
     public void listenButtonOnClick() {
         Log.d("Voice", "Starting voice recognition");
@@ -354,32 +359,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * keyword spotting mode we can react here, in other modes we need to wait
      * for final result in onResult.
      */
-    @Override
-    public void onPartialResult(Hypothesis hypothesis) {
-        if (hypothesis == null)
-            return;
-
-        //TODO: Delete these
-        String text = hypothesis.getHypstr();
-        if (text.equals(KEYPHRASE))
-            switchSearch(MENU_SEARCH);
-        else if (text.equals(DIGITS_SEARCH))
-            switchSearch(DIGITS_SEARCH);
-        else if (text.equals(CAPTURE) || text.equals(SNAP)) {
-            Log.d("VOICE", "CAPTURE REACHED YEAH BOIII");
-            safeCapture();
-        }
-        else if (text.equals(STATUS)) {
-            status();
-            }
-//            switchSearch(CAPTURE);
-        }
-//        else if (text.equals(PHONE_SEARCH))
-//            switchSearch(PHONE_SEARCH);
-//        else if (text.equals(FORECAST_SEARCH))
-//            switchSearch(FORECAST_SEARCH);
-
-
+//    @Override
+//    public void onPartialResult(Hypothesis hypothesis) {
+//        if (hypothesis == null)
+//            return;
+//
+//        //TODO: Delete these
+//        String text = hypothesis.getHypstr();
+//        if (text.equals(KEYPHRASE))
+//            switchSearch(MENU_SEARCH);
+//        else if (text.equals(DIGITS_SEARCH))
+//            switchSearch(DIGITS_SEARCH);
+//        else if (text.equals(CAPTURE) || text.equals(SNAP)) {
+//            Log.d("VOICE", "CAPTURE REACHED YEAH BOIII");
+//            safeCapture();
+//        }
+//        else if (text.equals(STATUS)) {
+//            status();
+//            }
+////            switchSearch(CAPTURE);
+//        }
+////        else if (text.equals(PHONE_SEARCH))
+////            switchSearch(PHONE_SEARCH);
+////        else if (text.equals(FORECAST_SEARCH))
+////            switchSearch(FORECAST_SEARCH);
     private void status() {
         Log.d("STATUS:", String.valueOf(CLEAN));
     }
@@ -394,90 +397,89 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * This callback is called when we stop the recognizer.
      */
-    @Override
-    public void onResult(Hypothesis hypothesis) {
-        Log.d("Voice", String.valueOf(hypothesis));
-    }
+//    @Override
+//    public void onResult(Hypothesis hypothesis) {
+//        Log.d("Voice", String.valueOf(hypothesis));
+//    }
+//
+//    @Override
+//    public void onBeginningOfSpeech() {
+//        Button one = findViewById(R.id.button_capture);
+//        one.setBackgroundColor(getResources().getColor(R.color.mic_colors));
+//        Log.d("WTF","onBeginningOfSpeech");
+//
+//    }
+//
+//    /**
+//     * We stop recognizer here to get a final result
+//     */
+//    @Override
+//    public void onEndOfSpeech() {
+//        if (!recognizer.getSearchName().equals(KWS_SEARCH))
+//            switchSearch(KWS_SEARCH);
+//        Button one = findViewById(R.id.button_capture);
+//        one.setBackgroundColor(getResources().getColor(R.color.aidialog_background));
+//        Log.d("WTF","onEndOfSpeech");
+//
+//    }
+//
+//    private void switchSearch(String searchName) {
+//        recognizer.stop();
+//
+//        // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
+//        if (searchName.equals(KWS_SEARCH))
+//            recognizer.startListening(searchName);
+//        else
+//            recognizer.startListening(searchName, 1000000);
+//    }
 
-    @Override
-    public void onBeginningOfSpeech() {
-        Button one = findViewById(R.id.button_capture);
-        one.setBackgroundColor(getResources().getColor(R.color.mic_colors));
-        Log.d("WTF","onBeginningOfSpeech");
+//    private void setupRecognizer(File assetsDir) throws IOException {
+//        // The recognizer can be configured to perform multiple searches
+//        // of different kind and switch between them
+//
+//        recognizer = SpeechRecognizerSetup.defaultSetup()
+//                .setAcousticModel(new File(assetsDir, "en-us-ptm"))
+//                .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
+//                .setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
+//                .getRecognizer();
+//        recognizer.addListener(this);
+//
+//        /* In your application you might not need to add all those searches.
+//          They are added here for demonstration. You can leave just one.
+//         */
+//        // Create keyword-activation search.
+//        recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
+//        recognizer.addKeyphraseSearch(KWS_SEARCH, CAPTURE);
+//        recognizer.addKeyphraseSearch(KWS_SEARCH, SNAP);
+//
+//
+//        // Create grammar-based search for selection between demos
+//        File menuGrammar = new File(assetsDir, "menu.gram");
+//        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+//
+//        // Create grammar-based search for digit recognition
+//        File digitsGrammar = new File(assetsDir, "digits.gram");
+//        recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
+//
+////    }
+//    @Override
+//    public void onError(Exception error) {
+//    }
 
-    }
+//    @Override
+//    public void onTimeout() {
+//        switchSearch(KWS_SEARCH);
+//    }
 
-    /**
-     * We stop recognizer here to get a final result
-     */
-    @Override
-    public void onEndOfSpeech() {
-        if (!recognizer.getSearchName().equals(KWS_SEARCH))
-            switchSearch(KWS_SEARCH);
-        Button one = findViewById(R.id.button_capture);
-        one.setBackgroundColor(getResources().getColor(R.color.aidialog_background));
-        Log.d("WTF","onEndOfSpeech");
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
 
-    }
-
-    private void switchSearch(String searchName) {
-        recognizer.stop();
-
-        // If we are not spotting, start listening with timeout (10000 ms or 10 seconds).
-        if (searchName.equals(KWS_SEARCH))
-            recognizer.startListening(searchName);
-        else
-            recognizer.startListening(searchName, 1000000);
-    }
-
-    private void setupRecognizer(File assetsDir) throws IOException {
-        // The recognizer can be configured to perform multiple searches
-        // of different kind and switch between them
-
-        recognizer = SpeechRecognizerSetup.defaultSetup()
-                .setAcousticModel(new File(assetsDir, "en-us-ptm"))
-                .setDictionary(new File(assetsDir, "cmudict-en-us.dict"))
-                .setRawLogDir(assetsDir) // To disable logging of raw audio comment out this call (takes a lot of space on the device)
-                .getRecognizer();
-        recognizer.addListener(this);
-
-        /* In your application you might not need to add all those searches.
-          They are added here for demonstration. You can leave just one.
-         */
-        // Create keyword-activation search.
-        recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
-        recognizer.addKeyphraseSearch(KWS_SEARCH, CAPTURE);
-        recognizer.addKeyphraseSearch(KWS_SEARCH, SNAP);
-
-
-        // Create grammar-based search for selection between demos
-        File menuGrammar = new File(assetsDir, "menu.gram");
-        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
-
-        // Create grammar-based search for digit recognition
-        File digitsGrammar = new File(assetsDir, "digits.gram");
-        recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
-
-    }
-
-    @Override
-    public void onError(Exception error) {
-    }
-
-    @Override
-    public void onTimeout() {
-        switchSearch(KWS_SEARCH);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//    }
 }
 
 
